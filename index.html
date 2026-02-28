@@ -3,23 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CorpBase Dashboard</title>
     <link rel="manifest" href="manifest.json">
-    <title>My PWA</title>
-</head>
-<body>
-    <h1>Hello, PWA!</h1>
+    <link rel="stylesheet" href="styles.css">
     <script>
+        // Check for service worker support
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('service-worker.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registered with scope:', registration.scope);
-                    })
-                    .catch(error => {
-                        console.log('ServiceWorker registration failed:', error);
-                    });
-            });
+            navigator.serviceWorker.register('service-worker.js')
+                .then(function(registration) {
+                    console.log('Service Worker registered', registration);
+                }).catch(function(error) {
+                    console.error('Service Worker registration failed', error);
+                });
+        }
+
+        // Function to update online/offline status
+        function updateOnlineStatus() {
+            const statusDiv = document.getElementById('status');
+            if (navigator.onLine) {
+                statusDiv.textContent = 'Online';
+                statusDiv.style.color = 'green';
+            } else {
+                statusDiv.textContent = 'Offline';
+                statusDiv.style.color = 'red';
+            }
+        }
+
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        updateOnlineStatus(); // Initial check
+
+        // Data management functions
+        function saveData(key, data) {
+            localStorage.setItem(key, JSON.stringify(data));
+        }
+        function loadData(key) {
+            return JSON.parse(localStorage.getItem(key));
         }
     </script>
+</head>
+<body>
+    <header>
+        <h1>CorpBase Dashboard</h1>
+        <div id="status">Checking status...</div>
+    </header>
+    <main>
+        <section>
+            <h2>Data Management</h2>
+            <button onclick="saveData('example', {example: 'data'})">Save Example Data</button>
+            <button onclick="console.log(loadData('example'))">Load Example Data</button>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2026 CorpBase. All Rights Reserved.</p>
+    </footer>
 </body>
 </html>
